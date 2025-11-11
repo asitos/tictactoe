@@ -39,8 +39,16 @@ const displayController = (() => {
     fieldElements.forEach((field) =>
         field.addEventListener("click", (e) => {
             if (gameController.getIsOver() || e.target.textContent !== "") return;
-            gameController.playRound(parseInt(e.target.dataset.index));
+            const result = gameController.playRound(parseInt(e.target.dataset.index));
             updateGameboard();
+            if (result.winner) {
+                // update persistent scoreboard
+                Score.add(result.winner);
+                setResultMessage(result.winner);
+                if (result.combo) highlightWinningFields(result.combo);
+            } else {
+                setMessageElement(`Player ${gameController.getCurrentPlayerSign()}'s turn`);
+            }
         })
     );
 
@@ -54,7 +62,14 @@ const displayController = (() => {
     const updateGameboard = () => {
         for (let i = 0; i < fieldElements.length; i++) {
             fieldElements[i].textContent = gameBoard.getField(i);
+            fieldElements[i].classList.remove("win");
         }
+    };
+
+    const highlightWinningFields = (combo) => {
+        combo.forEach((i) => {
+            fieldElements[i].classList.add("win");
+        });
     };
 
     const setResultMessage = (winner) => {
@@ -69,7 +84,7 @@ const displayController = (() => {
         messageElement.textContent = message;
     };
 
-    return { setResultMessage, setMessageElement };
+    return { setResultMessage, setMessageElement, highlightWinningFields };
 })();
 
 const gameController = (() => {
@@ -79,21 +94,19 @@ const gameController = (() => {
     let isOver = false;
 
     const playRound = (fieldIndex) => {
-        gameBoard.setField(fieldIndex, getCurrentPlayerSign());
-        if (checkWinner(fieldIndex)) {
-            displayController.setResultMessage(getCurrentPlayerSign());
+        const currentSign = getCurrentPlayerSign();
+        gameBoard.setField(fieldIndex, currentSign);
+        const winningCombo = checkWinner(fieldIndex);
+        if (winningCombo) {
             isOver = true;
-            return;
+            return { winner: currentSign, combo: winningCombo };
         }
         if (round === 9) {
-            displayController.setResultMessage("Draw");
             isOver = true;
-            return;
+            return { winner: "Draw", combo: null };
         }
         round++;
-        displayController.setMessageElement(
-            `Player ${getCurrentPlayerSign()}'s turn`
-        );
+        return { winner: null, combo: null };
     };
 
     const getCurrentPlayerSign = () => {
@@ -112,13 +125,15 @@ const gameController = (() => {
             [2, 4, 6],
         ];
 
-        return winConditions
-            .filter((combination) => combination.includes(fieldIndex))
-            .some((possibleCombination) => 
-                possibleCombination.every(
-                    (index) => gameBoard.getField(index) === getCurrentPlayerSign()
-                )
-            );
+        const currentSign = getCurrentPlayerSign();
+        for (const combo of winConditions) {
+            if (combo.includes(fieldIndex)) {
+                if (combo.every((i) => gameBoard.getField(i) === currentSign)) {
+                    return combo;
+                }
+            }
+        }
+        return null;
     };
 
     const getIsOver = () => {
@@ -130,5 +145,32 @@ const gameController = (() => {
         isOver = false;
     };
 
-    return { playRound, getIsOver, reset };
+    return { playRound, getIsOver, reset, getCurrentPlayerSign };
+})();
+
+const Score = (() => {
+  const key = "tic-tac-toe-scores";
+  const defaultScores = { X: 0, O: 0, Draw: 0 };
+  const load = () => JSON.parse(localStorage.getItem(key)) || defaultScores;
+  const save = (s) => localStorage.setItem(key, JSON.stringify(s));
+  let scores = load();
+
+  const add = (result) => {
+    if (result === "Draw") scores.Draw++;
+    else if (result === "X") scores.X++;
+    else if (result === "O") scores.O++;
+    save(scores);
+    render();
+  };
+
+  const render = () => {
+    document.getElementById("score-x").textContent = `X: ${scores.X}`;
+    document.getElementById("score-draw").textContent = `Draws: ${scores.Draw}`;
+    document.getElementById("score-o").textContent = `O: ${scores.O}`;
+  };
+
+  // initialize UI
+  document.addEventListener("DOMContentLoaded", render);
+
+  return { add, render };
 })();

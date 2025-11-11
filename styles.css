@@ -2,7 +2,7 @@
 
 :root {
   --background-color: black;
-  --font-color: #46494b;
+  --font-color: #ff9900;
   --header-background-color: #black;
   --header-font-color: #b0e4db;
   --field-background-color: black;
@@ -102,7 +102,7 @@ button {
 
 .message {
   padding: 2rem 0;
-  font-size: 3.5rem;
+  font-size: 4rem;
   text-align: center;
   color: #ff9900;
 }
@@ -142,19 +142,23 @@ button {
 
 .restart-button {
   padding: 10px 20px;
-  border: 3px solid var(--blue-border-color);
+  border: 3px solid #ff9900;
   border-radius: 7px;
-  background-color: var(--button-background-color);
-  color: var(--header-font-color);
-  font-size: 50px;
+  background-color: var(--background-color);
+  color: #ff9900;
+  font-size: 3rem;
 }
 
 .restart-button:hover {
-  background-color: var(--button-hover-background);
+    color: #ffff33;
+    border: 2px solid #ffff33;
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwLDAsMjU2LDI1NiIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgZmlsbC1ydWxlPSJub256ZXJvIj48ZyBmaWxsPSIjZmE1MjUyIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2UtZGFzaGFycmF5PSIiIHN0cm9rZS1kYXNob2Zmc2V0PSIwIiBmb250LWZhbWlseT0ibm9uZSIgZm9udC13ZWlnaHQ9Im5vbmUiIGZvbnQtc2l6ZT0ibm9uZSIgdGV4dC1hbmNob3I9Im5vbmUiIHN0eWxlPSJtaXgtYmxlbmQtbW9kZTogbm9ybWFsIj48ZyB0cmFuc2Zvcm09InNjYWxlKDguNTMzMzMsOC41MzMzMykiPjxwYXRoIGQ9Ik0yNCw4di0yaC0ydi0yaC0ydjJoLTJ2MmgtMWgtMXYyaC0ydi0yaC0xaC0xdi0yaC0ydi0yaC0ydjJoLTJ2MmgtMnYydjhoMnYyaDJ2MmgydjJoMnYyaDNoM3YtMmgydi0yaDJ2LTJoMnYtMmgydi04di0yeiI+PC9wYXRoPjwvZz48L2c+PC9zdmc+') 12 12, pointer;
+    transition: all 0.3s ease;
+    transform: translateY(-4px);
 }
 
 .restart-button:active {
-  background-color: var(--button-active-background);
+  background-color: #ff9900;
 }
 
 /* FOOTER */
@@ -168,8 +172,26 @@ button {
   justify-content: center;
   gap: 10px;
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   font-size: 20px;
+  color: #ff9900;
+}
+
+.footer p {
+    margin: 0;
+    color: #ff9900;
+    padding-right: 0px;
+}
+
+.github-logo {
+    height: 24px;
+    display: block;
+    transition: transform 0.3s ease-in-out;
+    cursor: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwLDAsMjU2LDI1NiIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgZmlsbC1ydWxlPSJub256ZXJvIj48ZyBmaWxsPSIjZmE1MjUyIiBmaWxsLXJ1bGU9Im5vbnplcm8iIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0iYnV0dCIgc3Ryb2tlLWxpbmVqb2luPSJtaXRlciIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBzdHJva2UtZGFzaGFycmF5PSIiIHN0cm9rZS1kYXNob2Zmc2V0PSIwIiBmb250LWZhbWlseT0ibm9uZSIgZm9udC13ZWlnaHQ9Im5vbmUiIGZvbnQtc2l6ZT0ibm9uZSIgdGV4dC1hbmNob3I9Im5vbmUiIHN0eWxlPSJtaXgtYmxlbmQtbW9kZTogbm9ybWFsIj48ZyB0cmFuc2Zvcm09InNjYWxlKDguNTMzMzMsOC41MzMzMykiPjxwYXRoIGQ9Ik0yNCw4di0yaC0ydi0yaC0ydjJoLTJ2MmgtMWgtMXYyaC0ydi0yaC0xaC0xdi0yaC0ydi0yaC0ydjJoLTJ2MmgtMnYydjhoMnYyaDJ2MmgydjJoMnYyaDNoM3YtMmgydi0yaDJ2LTJoMnYtMmgydi04di0yeiI+PC9wYXRoPjwvZz48L2c+PC9zdmc+') 12 12, pointer;
+}
+
+.github-logo:hover {
+    transform: rotate(360deg) scale(1.2);
 }
 
 .fa-github {

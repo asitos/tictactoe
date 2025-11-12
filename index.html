@@ -29,12 +29,27 @@
             </h1>
         </header>
         <main class="main">
-            <div class="scoreboard" id="scoreboard">
-                <span id="score-x">X: 0</span> |
-                <span id="score-draw">Draws: 0</span> |
-                <span id="score-o">O: 0</span>
+            <div class="controls">
+              <div class="scoreboard" id="scoreboard">
+                  <span id="score-x">X: 0</span> |
+                  <span id="score-draw">Draws: 0</span> |
+                  <span id="score-o">O: 0</span>
+              </div>
+              <div class="mode-select" id="mode-select">
+                  <div class="message" id="message">Player X's turn</div>
+                  <label><input type="radio" name="opponent" value="human" id="mode-human" checked> Human vs Human</label>
+                  <label><input type="radio" name="opponent" value="ai" id="mode-ai"> Human vs AI</label>
+              </div>
+              <div class="side-select" id="side-select">
+                  <label><input type="radio" name="side" value="X" id="side-x" checked> Play as X (go first)</label>
+                  <label><input type="radio" name="side" value="O" id="side-o"> Play as O (go second)</label>
+              </div>
+              <div id="ai-thinking" class="ai-thinking" style="display:none"><span class="ai-dot"></span><span>AI is thinking...</span></div>
+              <div class="center">
+                  <button class="restart-button" id="restart-button">Restart</button>
+              </div>
             </div>
-            <div class="message" id="message">Player X's turn</div>
+            
             <div class="gameboard">
                 <div class="field" data-index="0"></div>
                 <div class="field" data-index="1"></div>
@@ -45,9 +60,6 @@
                 <div class="field" data-index="6"></div>
                 <div class="field" data-index="7"></div>
                 <div class="field" data-index="8"></div>  
-            </div>
-            <div class="center">
-                <button class="restart-button" id="restart-button">Restart</button>
             </div>
         </main>
         <footer class="footer">

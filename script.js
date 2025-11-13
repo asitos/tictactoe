@@ -37,6 +37,7 @@ const displayController = (() => {
     const restartButton = document.getElementById("restart-button");
     const modeInputs = document.querySelectorAll('input[name="opponent"]');
     const sideInputs = document.querySelectorAll('input[name="side"]');
+    const engineInputs = document.querySelectorAll('input[name="ai-engine"]');
     const aiIndicator = document.getElementById("ai-thinking");
 
     // mode selector -> set gameController mode
@@ -67,6 +68,29 @@ const displayController = (() => {
         input.addEventListener("change", (e) => {
             gameController.setHumanSign(e.target.value);
             // if switching midgame and it's AI's turn, let AI move
+            if (gameController.getMode() === "ai" && gameController.isAITurn() && !gameController.getIsOver()) {
+                showAIThinking(true);
+                setTimeout(() => {
+                    const aiResult = gameController.makeAIMove();
+                    updateGameboard();
+                    showAIThinking(false);
+                    if (aiResult.winner) {
+                        Score.add(aiResult.winner);
+                        setResultMessage(aiResult.winner);
+                        if (aiResult.combo) highlightWinningFields(aiResult.combo);
+                    } else {
+                        setMessageElement(`Player ${gameController.getCurrentPlayerSign()}'s turn`);
+                    }
+                }, 300);
+            }
+        })
+    );
+
+    // engine selector -> set AI engine
+    engineInputs.forEach((input) =>
+        input.addEventListener("change", (e) => {
+            gameController.setAIEngine(e.target.value);
+            // if it's AI's turn, let AI act with new engine
             if (gameController.getMode() === "ai" && gameController.isAITurn() && !gameController.getIsOver()) {
                 showAIThinking(true);
                 setTimeout(() => {
@@ -185,6 +209,7 @@ const gameController = (() => {
     let isOver = false;
     let mode = "human"; // 'human' or 'ai'
     let humanSign = "X"; // player preference: 'X' or 'O'
+    let aiEngine = "minimax"; // 'minimax' or 'random'
 
     const playRound = (fieldIndex) => {
         const currentSign = getCurrentPlayerSign();
@@ -211,6 +236,12 @@ const gameController = (() => {
     const setHumanSign = (s) => {
         if (s === "X" || s === "O") humanSign = s;
     };
+
+    const setAIEngine = (e) => {
+        if (e === "minimax" || e === "random") aiEngine = e;
+    };
+
+    const getAIEngine = () => aiEngine;
 
     const getHumanSign = () => humanSign;
 
@@ -271,12 +302,21 @@ const gameController = (() => {
     // simple AI that: (1) wins if possible, (2) blocks opponent win, (3) takes center, (4) picks random corner/side
     // Minimax-based AI with fallback
     const chooseAIMove = () => {
+        const engine = aiEngine || "minimax";
         const aiSign = humanSign === "X" ? "O" : "X";
+        const available = getAvailableFields();
+        if (available.length === 0) return null;
+
+        if (engine === "random") {
+            // choose uniformly random from available
+            return available[Math.floor(Math.random() * available.length)];
+        }
+
+        // minimax engine
         const human = humanSign;
         const boardArr = [];
         for (let i = 0; i < 9; i++) boardArr[i] = gameBoard.getField(i) || "";
 
-        // helper to check winner on a given board
         const winnerOnBoard = (board) => {
             const winConditions = [
                 [0, 1, 2],
@@ -326,9 +366,6 @@ const gameController = (() => {
             }
         };
 
-        // choose best move by minimax
-        const available = getAvailableFields();
-        if (available.length === 0) return null;
         let bestScore = -Infinity;
         let bestMove = available[0];
         for (const idx of available) {
@@ -347,6 +384,7 @@ const gameController = (() => {
     const makeAIMove = () => {
         if (isOver) return { winner: null, combo: null };
         const index = chooseAIMove();
+        if (index === null || index === undefined) return { winner: null, combo: null };
         return playRound(index);
     };
 
@@ -387,7 +425,7 @@ const gameController = (() => {
         // preserve mode and humanSign so UI selection remains effective on restart
     };
 
-    return { playRound, getIsOver, reset, getCurrentPlayerSign, setMode, getMode, setHumanSign, getHumanSign, isAITurn, makeAIMove };
+    return { playRound, getIsOver, reset, getCurrentPlayerSign, setMode, getMode, setHumanSign, getHumanSign, isAITurn, makeAIMove, setAIEngine, getAIEngine };
 })();
 
 // initialize controller with current UI selections after controller exists
@@ -396,6 +434,8 @@ const gameController = (() => {
     if (checkedMode) gameController.setMode(checkedMode.value);
     const checkedSide = document.querySelector('input[name="side"]:checked');
     if (checkedSide) gameController.setHumanSign(checkedSide.value);
+    const checkedEngine = document.querySelector('input[name="ai-engine"]:checked');
+    if (checkedEngine) gameController.setAIEngine(checkedEngine.value);
     // if AI mode and AI should play first, trigger an initial AI move
     if (gameController.getMode() === "ai" && gameController.isAITurn() && !gameController.getIsOver()) {
         // find displayController's showAIThinking and update functions via existing globals

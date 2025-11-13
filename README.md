@@ -24,6 +24,7 @@ a classic game of tic-tac-toe, built with pure **JavaScript**, **HTML**, and **C
 -   includes a "Restart" button to quickly start a new game.
 -   minimax function based AI opponent.
 -   clean, minimalist, and responsive design.
+-   localStorage, or persistent storage for tracking score, and display them on the scoreboard
 
 ## technologies used
 
